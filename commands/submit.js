@@ -40,7 +40,10 @@ module.exports = {
 
             // Reference to the month document
             const monthDocRef = monthlyListCollection.doc(monthKey);
-
+            // Check if this is a new submission or an update
+            const monthDoc = await monthDocRef.get();
+            const data = monthDoc.data();
+            const isUpdate = data && data[userId] && data[userId].Album !== album;
             // Use set with merge to create or update the document
             await monthDocRef.set({
                 month: monthKey.split('_')[0], // Extract month name
@@ -48,11 +51,6 @@ module.exports = {
                 [userId]: albumEntry,
                 lastUpdated: admin.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
-
-            // Check if this is a new submission or an update
-            const monthDoc = await monthDocRef.get();
-            const data = monthDoc.data();
-            const isUpdate = data && data[userId] && data[userId].Album !== album;
 
             const responseMessage = isUpdate 
                 ? `🔄 **Album Updated!**\n**Previous:** ${data[userId].Artist} - ${data[userId].Album}\n**New:** ${artist} - ${album}\n**Link:** ${link}`

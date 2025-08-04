@@ -40,14 +40,16 @@ module.exports = {
 
             // Extract user submissions (exclude metadata fields)
             for (const [key, value] of Object.entries(data)) {
-                // New object format
-                submissions.push({
-                    userId: key,
-                    artist: value.Artist,
-                    album: value.Album,
-                    link: value.Link || 'No link provided',
-                    submittedBy: value.SubmittedBy || 'Unknown User'
-                });
+                if (/^\d+$/.test(key)) {
+                    // New object format
+                    submissions.push({
+                        userId: key,
+                        artist: value.Artist,
+                        album: value.Album,
+                        link: value.Link || 'No link provided',
+                        submittedBy: value.SubmittedBy || 'Unknown User'
+                    });
+                }
             }
 
             if (submissions.length === 0) {

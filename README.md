@@ -77,13 +77,13 @@ The bot uses the following Firebase Firestore structure:
 
 ```
 monthly_list/
-├── August_2024/
+├── August_2025/
 │   ├── month: "August"
-│   ├── year: 2024
+│   ├── year: 2025
 │   ├── 123456789: "Artist Name;Album Name"
 │   ├── 987654321: "Another Artist;Another Album"
 │   └── lastUpdated: timestamp
-└── September_2024/
+└── September_2025/
     └── ...
 ```
 

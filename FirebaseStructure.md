@@ -3,5 +3,6 @@
 - Monthly List
     - Each entry will have a month (i.e month: August) - that entry will represent that month
     - I think each month should then have a list of KVPs
-        - They key is a users DiscordID, the value is the album (artistname;albumname)
-        - If a user submits a different album - overwrite their entry instead of duping DiscordID
+        - The key is a users DiscordID, the value a list of KVPs?
+            - {Album {"Be Here Now"},{Artist: "Oasis"}, {Link: generate lastfm link or somethin}}, etc
+            - Allows for some scalability

@@ -27,7 +27,7 @@ module.exports = {
         // TODO: Check for duplicates
         
         await interaction.reply({
-            content: `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}\n**Link:** ${link}\n\nThank you for your submission!`,
+            content: `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}\n**Link:** ${link}\n`,
             ephemeral: true
         });
     },

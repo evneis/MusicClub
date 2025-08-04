@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('list')
         .setDescription('List all submitted albums for this month'),
-    
+
     async execute(interaction) {
         // Check if Firebase is available
         // if (!isFirebaseAvailable()) {
@@ -19,10 +19,10 @@ module.exports = {
         try {
             const monthlyListCollection = getCollection('monthly_list');
             const monthKey = getCurrentMonthKey();
-            
+
             // Get the month document
             const monthDoc = await monthlyListCollection.doc(monthKey).get();
-            
+
             if (!monthDoc.exists) {
                 const embed = new EmbedBuilder()
                     .setColor(0xFF6B6B)
@@ -30,20 +30,24 @@ module.exports = {
                     .setDescription('No albums have been submitted for this month yet.')
                     .setTimestamp()
                     .setFooter({ text: 'MusicClub Bot' });
-                
+
                 await interaction.reply({ embeds: [embed] });
                 return;
             }
 
             const data = monthDoc.data();
             const submissions = [];
-            
+
             // Extract user submissions (exclude metadata fields)
             for (const [key, value] of Object.entries(data)) {
-                if (key !== 'month' && key !== 'year' && key !== 'lastUpdated') {
-                    const [artist, album] = value.split(';');
-                    submissions.push({ userId: key, artist, album });
-                }
+                // New object format
+                submissions.push({
+                    userId: key,
+                    artist: value.Artist,
+                    album: value.Album,
+                    link: value.Link || 'No link provided',
+                    submittedBy: value.SubmittedBy || 'Unknown User'
+                });
             }
 
             if (submissions.length === 0) {
@@ -53,7 +57,7 @@ module.exports = {
                     .setDescription('No albums have been submitted for this month yet.')
                     .setTimestamp()
                     .setFooter({ text: 'MusicClub Bot' });
-                
+
                 await interaction.reply({ embeds: [embed] });
                 return;
             }
@@ -69,12 +73,12 @@ module.exports = {
             // Add fields for each submission
             for (let i = 0; i < submissions.length; i++) {
                 const submission = submissions[i];
-                const user = await interaction.client.users.fetch(submission.userId).catch(() => ({ username: 'Unknown User' }));
-                const username = user.username || 'Unknown User';
-                
+                const user = await interaction.client.users.fetch(submission.userId).catch(() => ({ username: submission.submittedBy }));
+                const username = user.username || submission.submittedBy;
+
                 embed.addFields({
                     name: `${i + 1}. ${submission.album}`,
-                    value: `**Artist:** ${submission.artist}\n**Submitted by:** ${username}`,
+                    value: `**Artist:** ${submission.artist}\n**Submitted by:** ${username}\n**Link:** ${submission.link}`,
                     inline: false
                 });
             }

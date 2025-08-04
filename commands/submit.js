@@ -29,8 +29,14 @@ module.exports = {
             const monthlyListCollection = getCollection('monthly_list');
             const monthKey = getCurrentMonthKey();
 
-            // Create the album entry in format "artistname;albumname"
-            const albumEntry = `${artist};${album}`;
+            // Create the album entry as an object with structured data
+            const albumEntry = {
+                Album: album,
+                Artist: artist,
+                Link: link,
+                SubmittedBy: userName,
+                SubmittedAt: admin.firestore.FieldValue.serverTimestamp()
+            };
 
             // Reference to the month document
             const monthDocRef = monthlyListCollection.doc(monthKey);
@@ -46,10 +52,10 @@ module.exports = {
             // Check if this is a new submission or an update
             const monthDoc = await monthDocRef.get();
             const data = monthDoc.data();
-            const isUpdate = data && data[userId] && data[userId] !== albumEntry;
+            const isUpdate = data && data[userId] && data[userId].Album !== album;
 
             const responseMessage = isUpdate 
-                ? `🔄 **Album Updated!**\n**Previous:** ${data[userId]}\n**New:** ${albumEntry}\n**Link:** ${link}`
+                ? `🔄 **Album Updated!**\n**Previous:** ${data[userId].Artist} - ${data[userId].Album}\n**New:** ${artist} - ${album}\n**Link:** ${link}`
                 : `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}\n**Link:** ${link}`;
 
             await interaction.reply({

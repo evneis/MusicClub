@@ -11,6 +11,9 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Firebase credentials
+skagallery-21169-firebase-adminsdk-fbsvc-55de73c835.json
+
 # Runtime data
 pids
 *.pid

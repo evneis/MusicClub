@@ -49,8 +49,8 @@ for (const file of commandFiles) {
 
 // Event handler for when the bot is ready
 client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    console.log('MusicClub Discord Bot is ready! 🎵');
+    console.log(`Logged in as ${client.user.tag}`);
+    console.log('MusicClub Discord Bot is ready!');
 });
 
 // Event handler for interaction creation (slash commands)

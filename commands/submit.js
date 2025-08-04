@@ -28,7 +28,6 @@ module.exports = {
         
         await interaction.reply({
             content: `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}\n**Link:** ${link}\n`,
-            ephemeral: true
         });
     },
 }; 

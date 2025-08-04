@@ -1,4 +1,14 @@
-const admin = require('firebase-admin');
+let firebaseConfig;
+let admin;
+
+// Try to load Firebase configuration
+try {
+    firebaseConfig = require('./firebaseConfig');
+    admin = firebaseConfig.admin;
+} catch (error) {
+    // Firebase not available
+    admin = null;
+}
 
 /**
  * Get the Firebase collection prefix from environment variables
@@ -44,7 +54,7 @@ function getCollection(collectionName) {
  * @returns {boolean} True if Firebase is available
  */
 function isFirebaseAvailable() {
-    return admin.apps.length > 0;
+    return firebaseConfig && firebaseConfig.app;
 }
 
 /**
@@ -55,7 +65,7 @@ function getFirestore() {
     if (!isFirebaseAvailable()) {
         throw new Error('Firebase is not initialized');
     }
-    return admin.firestore();
+    return firebaseConfig.firestore;
 }
 
 module.exports = {

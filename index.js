@@ -1,17 +1,14 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const admin = require('firebase-admin');
 require('dotenv').config();
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK using firebaseConfig.js
+let firebaseConfig;
 if (process.env.FIREBASE_CREDENTIAL) {
     try {
-        const serviceAccount = require(process.env.FIREBASE_CREDENTIAL);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase initialized successfully! 🔥');
+        firebaseConfig = require('./firebaseConfig');
+        console.log('Firebase initialized successfully');
     } catch (error) {
         console.error('Error initializing Firebase:', error);
         console.log('Continuing without Firebase...');

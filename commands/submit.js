@@ -19,15 +19,6 @@ module.exports = {
                 .setRequired(false)),
     
     async execute(interaction) {
-        // Check if Firebase is available
-        // if (!isFirebaseAvailable()) {
-        //     await interaction.reply({
-        //         content: '❌ **Error:** Firebase is not configured. Please contact an administrator.',
-        //         ephemeral: true
-        //     });
-        //     return;
-        // }
-
         const album = interaction.options.getString('album');
         const artist = interaction.options.getString('artist');
         const link = interaction.options.getString('link') || 'No link provided';

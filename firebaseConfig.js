@@ -1,21 +1,20 @@
-import admin from 'firebase-admin';
-//import config from '../config.js';
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import { config } from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
+const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config();
 
-// Load environment variables
-config();
-
-// Set up file paths
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// __dirname is available by default in CommonJS
 
 // Path to service account file
-const serviceAccountPath = path.join(__dirname, '..', process.env.FIREBASE_CREDENTIAL);
+const serviceAccountPath = path.join(__dirname, process.env.FIREBASE_CREDENTIAL);
+
+// Check if the service account file exists
+if (!fs.existsSync(serviceAccountPath)) {
+    throw new Error(`Firebase service account file not found at: ${serviceAccountPath}`);
+}
+
 const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
 // Initialize Firebase Admin with service account
@@ -30,9 +29,14 @@ const db = getFirestore(firebaseApp);
 const collectionPrefix = process.env.FIREBASE_COLLECTION_PREFIX || '';
 
 // Define collections with environment-specific prefix
-export const imagesCollection = db.collection(`${collectionPrefix}images`);
-export const timestampCollection = db.collection(`${collectionPrefix}timestamp`);
+const monthlyListCollection = db.collection(`${collectionPrefix}monthly_list`);
+// const timestampCollection = db.collection(`${collectionPrefix}timestamp`);
 
 // Export the Firebase app and database instances
-export const app = firebaseApp;
-export const firestore = db; 
+module.exports = {
+  app: firebaseApp,
+  firestore: db,
+  monthlyListCollection,
+  // timestampCollection,
+  admin
+}; 

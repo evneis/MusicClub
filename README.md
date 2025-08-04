@@ -9,3 +9,8 @@
 - Lastfm connectivity
 - Automatic album parsing to retrieve album name and artist name
     - retrieving links for spotify and apple music automatically would be cool
+
+
+# Album Links
+- Investigate MusicBrainz API for getting links
+    - Regardless this might still be good for getting metadata (if lastfm doesn't already do it)

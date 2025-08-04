@@ -1,0 +1,78 @@
+name: Deploy MusicClub Bot
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute deployment on VM
+        id: deployment
+        continue-on-error: true
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          command_timeout: 10m
+          script: |
+            cd ~/MusicClub
+            
+            # Stop current instance if running
+            /home/satanicpickle23/.nvm/versions/node/v22.16.0/bin/pm2 stop musicclub || true
+            
+            # Pull latest changes
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Install dependencies (in case any changed)
+            npm ci --omit=dev --no-audit --no-fund --verbose
+            
+            # Update Discord commands
+            # node clear-commands.js # Not necessary, commands are refreshed on deploy-commands.js
+            node deploy-commands.js
+            
+            # Start/restart with PM2
+            /home/satanicpickle23/.nvm/versions/node/v22.16.0/bin/pm2 start index.js --name "musicclub" -- --experimental-specifier-resolution=node
+            /home/satanicpickle23/.nvm/versions/node/v22.16.0/bin/pm2 save
+      
+      - name: Check deployment status
+        id: check
+        if: steps.deployment.outcome == 'failure' || steps.deployment.conclusion == 'timed_out'
+        run: |
+          echo "status=failure" >> $GITHUB_OUTPUT
+          echo "Deployment failed or timed out!"
+          exit 1
+      
+      - name: Discord notification on success
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "MusicClub Deployment Successful"
+          description: "The deployment to the VM has completed successfully."
+          color: 0x00FF00
+          
+      - name: Discord notification on failure
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "MusicClub Deployment Failed"
+          description: |
+            The deployment to the VM has failed.
+            
+            Error details:
+            ```
+            ${{ toJSON(steps.deployment.outputs) }}
+            ```
+            
+            Please check the full logs at:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          color: 0xFF0000

@@ -3,6 +3,20 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+// Initialize Firebase Admin SDK using firebaseConfig.js
+let firebaseConfig;
+if (process.env.FIREBASE_CREDENTIAL) {
+    try {
+        firebaseConfig = require('./firebaseConfig');
+        console.log('Firebase initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Firebase:', error);
+        console.log('Continuing without Firebase...');
+    }
+} else {
+    console.log('FIREBASE_CREDENTIAL not found in environment variables. Firebase features will be disabled.');
+}
+
 // Create a new client instance
 const client = new Client({
     intents: [
@@ -32,8 +46,8 @@ for (const file of commandFiles) {
 
 // Event handler for when the bot is ready
 client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    console.log('MusicClub Discord Bot is ready! 🎵');
+    console.log(`Logged in as ${client.user.tag}`);
+    console.log('MusicClub Discord Bot is ready!');
 });
 
 // Event handler for interaction creation (slash commands)

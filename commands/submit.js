@@ -12,16 +12,16 @@ module.exports = {
         .addStringOption(option =>
             option.setName('artist')
                 .setDescription('The artist name')
-                .setRequired(true)),
-        // .addStringOption(option =>
-        //     option.setName('link')
-        //         .setDescription('Link to the album (Spotify, Apple Music, etc.)')
-        //         .setRequired(false)),
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('link')
+                .setDescription('Link to the album (Spotify, Apple Music, etc.)')
+                .setRequired(false)),
     
     async execute(interaction) {
         const album = interaction.options.getString('album');
         const artist = interaction.options.getString('artist');
-        //const link = interaction.options.getString('link') || 'No link provided';
+        const link = interaction.options.getString('link') || 'No link provided';
         const userId = interaction.user.id;
         const userName = interaction.user.username;
 
@@ -33,7 +33,7 @@ module.exports = {
             const albumEntry = {
                 Album: album,
                 Artist: artist,
-                //Link: link,
+                Link: link,
                 SubmittedBy: userName,
                 SubmittedAt: admin.firestore.FieldValue.serverTimestamp()
             };
@@ -53,8 +53,8 @@ module.exports = {
             }, { merge: true });
 
             const responseMessage = isUpdate 
-                ? `🔄 **Album Updated!**\n**Previous:** ${data[userId].Artist} - ${data[userId].Album}\n**New:** ${artist} - ${album}`
-                : `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}`;
+                ? `🔄 **Album Updated!**\n**Previous:** ${data[userId].Artist} - ${data[userId].Album}\n**New:** ${artist} - ${album}\n**Link:** ${link}`
+                : `🎵 **Album Submitted!**\n**Album:** ${album}\n**Artist:** ${artist}\n**Link:** ${link}`;
 
             await interaction.reply({
                 content: responseMessage,

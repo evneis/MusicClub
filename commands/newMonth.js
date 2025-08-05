@@ -20,15 +20,6 @@ module.exports = {
         .setDescription('Create a new month entry in the music club database'),
 
     async execute(interaction) {
-        // Check if Firebase is available
-        if (!isFirebaseAvailable()) {
-            await interaction.reply({
-                content: '❌ **Error:** Firebase is not configured. Please contact an administrator.',
-                ephemeral: true
-            });
-            return;
-        }
-
         try {
             const monthlyListCollection = getCollection('monthly_list');
             const currentMonthKey = getCurrentMonthKey();
@@ -96,7 +87,7 @@ module.exports = {
             console.error('Error creating new month in Firebase:', error);
             await interaction.reply({
                 content: '❌ **Error:** Failed to create new month. Please try again later.',
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
     },

@@ -29,7 +29,7 @@ module.exports = {
             const monthlyListCollection = getCollection('monthly_list');
             const monthKey = getCurrentMonthKey();
 
-            // Create the album entry as an object with structured data
+
             const albumEntry = {
                 Album: album,
                 Artist: artist,
@@ -38,16 +38,15 @@ module.exports = {
                 SubmittedAt: admin.firestore.FieldValue.serverTimestamp()
             };
 
-            // Reference to the month document
+
             const monthDocRef = monthlyListCollection.doc(monthKey);
             // Check if this is a new submission or an update
             const monthDoc = await monthDocRef.get();
             const data = monthDoc.data();
             const isUpdate = data && data[userId] && data[userId].Album !== album;
-            // Use set with merge to create or update the document
             await monthDocRef.set({
-                month: monthKey.split('_')[0], // Extract month name
-                year: parseInt(monthKey.split('_')[1]), // Extract year
+                month: monthKey.split('_')[0],
+                year: parseInt(monthKey.split('_')[1]),
                 [userId]: albumEntry,
                 lastUpdated: admin.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
@@ -65,7 +64,7 @@ module.exports = {
             console.error('Error submitting album to Firebase:', error);
             await interaction.reply({
                 content: '❌ **Error:** Failed to submit album. Please try again later.',
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
     },

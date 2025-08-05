@@ -7,15 +7,6 @@ module.exports = {
         .setDescription('List all submitted albums for this month'),
 
     async execute(interaction) {
-        // Check if Firebase is available
-        // if (!isFirebaseAvailable()) {
-        //     await interaction.reply({
-        //         content: '❌ **Error:** Firebase is not configured. Please contact an administrator.',
-        //         ephemeral: true
-        //     });
-        //     return;
-        // }
-
         try {
             const monthlyListCollection = getCollection('monthly_list');
             const monthKey = getCurrentMonthKey();
@@ -38,10 +29,9 @@ module.exports = {
             const data = monthDoc.data();
             const submissions = [];
 
-            // Extract user submissions (exclude metadata fields)
             for (const [key, value] of Object.entries(data)) {
+                // Only include keys that are discord user IDs
                 if (/^\d+$/.test(key)) {
-                    // New object format
                     submissions.push({
                         userId: key,
                         artist: value.Artist,
@@ -64,7 +54,6 @@ module.exports = {
                 return;
             }
 
-            // Create embed with submissions
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
                 .setTitle(`🎵 Music Club Submissions - ${data.month} ${data.year}`)
@@ -72,7 +61,6 @@ module.exports = {
                 .setTimestamp()
                 .setFooter({ text: 'MusicClub Bot' });
 
-            // Add fields for each submission
             for (let i = 0; i < submissions.length; i++) {
                 const submission = submissions[i];
                 const user = await interaction.client.users.fetch(submission.userId).catch(() => ({ username: submission.submittedBy }));
@@ -91,7 +79,7 @@ module.exports = {
             console.error('Error retrieving albums from Firebase:', error);
             await interaction.reply({
                 content: '❌ **Error:** Failed to retrieve albums. Please try again later.',
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
     },

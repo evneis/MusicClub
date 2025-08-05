@@ -46,7 +46,7 @@ module.exports = {
                         userId: key,
                         artist: value.Artist,
                         album: value.Album,
-                        //link: value.Link || 'No link provided',
+                        link: value.Link || 'No link provided',
                         submittedBy: value.SubmittedBy || 'Unknown User'
                     });
                 }
@@ -80,7 +80,7 @@ module.exports = {
 
                 embed.addFields({
                     name: `${i + 1}. ${submission.album}`,
-                    value: `**Artist:** ${submission.artist}\n**Submitted by:** ${username}`,
+                    value: `**Artist:** ${submission.artist}\n**Submitted by:** ${username}\n**Link:** ${submission.link}`,
                     inline: false
                 });
             }

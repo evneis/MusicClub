@@ -10,6 +10,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env copy
 
 # Firebase credentials
 skagallery-21169-firebase-adminsdk-fbsvc-55de73c835.json
